@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drupal
+  labels:
+    app: drupal
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: drupal
+  template:
+    metadata:
+      labels:
+        app: drupal
+    spec:
+      containers:
+      - name: drupal-database
+        image: postgres:alpine3.15
+        ports:
+        - containerPort: 5432
+      - name: drupal
+        image: postgres:alpine3.15
+        ports:
+        - containerPort: 5432
