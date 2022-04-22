@@ -13,65 +13,37 @@ spec:
 
 ---
 apiVersion: v1
-kind: PersistentVolumeClaim
+kind: PersistentVolume
 metadata:
-  name: pv0001-drupal-database-claim
+  name: drupal-pv
 spec:
-  volumeName: drupal-mysql-pv
   accessModes:
     - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
+  capacity:
+    storage: 5Gi
+  hostPath:
+    path: /drupal-data
 
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: pv0001-drupal-modules-claim
+  name: drupal-mysql-pvc
 spec:
-  volumeName: drupal-mysql-pv
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi
+      storage: 5Gi
 
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: pv0001-drupal-themes-claim
+  name: drupal-pvc
 spec:
-  volumeName: drupal-mysql-pv
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: pv0001-drupal-profiles-claim
-spec:
-  volumeName: drupal-mysql-pv
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: pv0001-drupal-sites-claim
-spec:
-  volumeName: drupal-mysql-pv
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
+      storage: 5Gi

@@ -16,49 +16,33 @@ spec:
         app: drupal
     spec:
       volumes:
-        - name: pv0001-drupal-database
+        - name: drupal-volume
           persistentVolumeClaim:
-            claimName: pv0001-drupal-database-claim
-        - name: pv0001-drupal-modules
-          persistentVolumeClaim:
-            claimName: pv0001-drupal-modules-claim
-        - name: pv0001-drupal-profiles
-          persistentVolumeClaim:
-            claimName: pv0001-drupal-profiles-claim
-        - name: pv0001-drupal-themes
-          persistentVolumeClaim:
-            claimName: pv0001-drupal-themes-claim
-        - name: pv0001-drupal-sites
-          persistentVolumeClaim:
-            claimName: pv0001-drupal-sites-claim
+            claimName: drupal-mysql-pvc
       containers:
-        - name: drupal-database
-          image: postgres:alpine3.15
+        - name: drupal-mysql
+          image: mysql:5.7
           ports:
-            - containerPort: 5432
+            - name: mysql
+              protocol: TCP
+              containerPort: 3306
           env:
-            - name: POSTGRES_USER
-              value: postgres
-            - name: POSTGRES_DATABASE
-              value: postgres
-            - name: POSTGRES_PASSWORD
-              value: postgres
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: drupal-mysql-secret
+                  key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: drupal-mysql-secret
+                  key: MYSQL_DATABASE
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: drupal-mysql-secret
+                  key: MYSQL_USER
           volumeMounts:
-            - mountPath: "/var/lib/postgresql/data"
-              name: pv0001-drupal-database
-        - name: drupal
-          image: drupal:9.2.17-php7.4-fpm-buster
-          ports:
-            - containerPort: 8080
-          env:
-            - name: POSTGRES_USER
-              value: postgres
-          volumeMounts:
-            - mountPath: "/var/www/html/modules"
-              name: pv0001-drupal-modules
-            - mountPath: "/var/www/html/profiles"
-              name: pv0001-drupal-profiles
-            - mountPath: "/var/www/html/themes"
-              name: pv0001-drupal-themes
-            - mountPath: "/var/www/html/sites"
-              name: pv0001-drupal-sites
+            - mountPath: /var/lib/mysql
+              name: drupal-volume
+              subPath: dbdata
