@@ -2,9 +2,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: drupal
+  name: drupal-db
   labels:
-    app: drupal
+    app: drupal-db
 spec:
   replicas: 1
   selector:
@@ -46,3 +46,51 @@ spec:
             - mountPath: /var/lib/mysql
               name: drupal-volume
               subPath: dbdata
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drupal
+  labels:
+    app: drupal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: drupal
+  template:
+    metadata:
+      labels:
+        app: drupal
+    spec:
+      volumes:
+        - name: drupal-volume
+          persistentVolumeClaim:
+            claimName: drupal-pvc
+      initContainers:
+	- name: drupal-init
+	  image: drupal:8.6
+	  command: ["/bin/bash", "-c"]
+	  args: ["cp -r /var/www/html/sites/ /data/; chown www-data:www-data /data/ -R"]
+	  volumeMounts:
+	    - mountPath: /data
+	      name: drupal-volume
+      containers:
+	- image: drupal:8.6
+	  name: drupal
+	  ports:
+	    - containerPort: 80
+	  volumeMounts:
+	    - mountPath: /var/www/html/modules
+	      name: drupal-volume
+	      subPaths: modules
+	    - mountPath: /var/www/html/profiles
+	      name: drupal-volume
+	      subPaths: profiles
+	    - mountPath: /var/www/html/sites
+	      name: drupal-volume
+	      subPaths: sites
+	    - mountPath: /var/www/html/themes
+	      name: drupal-volume
+	      subPaths: themes
