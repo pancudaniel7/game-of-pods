@@ -4,7 +4,7 @@ kind: Deployment
 metadata:
   name: drupal-db
   labels:
-    app: drupal-db
+    app: 
 spec:
   replicas: 1
   selector:
