@@ -6,7 +6,7 @@ docker network create redis --driver bridge
 
 for j in `seq 1 6`; do
 docker run --network redis -d -v \
-$PWD/deployments/redis/config/cluster-config.yaml:/usr/local/etc/redis/redis.conf \
+$PWD/deployments/redis/config/redis.yaml:/usr/local/etc/redis/redis.conf \
 --name redis-"$j" \
 redis redis-server /usr/local/etc/redis/redis.conf;
 done

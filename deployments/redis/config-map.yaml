@@ -1,0 +1,9 @@
+---
+apiVersion: v1
+data:
+  redis.yaml: "port 6379 \ncluster-enabled yes\ncluster-config-file nodes.conf\ncluster-node-timeout
+    5000\nappendonly yes\n"
+kind: ConfigMap
+metadata:
+  name: redis-cluster-configmap
+  namespace: default
